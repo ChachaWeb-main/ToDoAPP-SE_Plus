@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "94d4bf9ac7f4a933030e46a346ee2917",
+    "content-hash": "5743f20ce25cb8ce096dad628386074f",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1679,6 +1679,63 @@
                 }
             ],
             "time": "2021-08-06T20:32:15+00:00"
+        },
+        {
+            "name": "rutorika/sortable",
+            "version": "7.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/boxfrommars/rutorika-sortable.git",
+                "reference": "d895553c22c6b34086e033dc02eac46a73160440"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/boxfrommars/rutorika-sortable/zipball/d895553c22c6b34086e033dc02eac46a73160440",
+                "reference": "d895553c22c6b34086e033dc02eac46a73160440",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^5.7 | ^5.8 | ^6.0 | ^7.0",
+                "php": ">=7.2.5"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~5",
+                "phpunit/phpunit": "~8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Rutorika\\Sortable": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Groza",
+                    "email": "boxfrommars@gmail.com"
+                }
+            ],
+            "description": "Adds sortable behavior and ordering to Laravel Eloquent models. Grouping and many to many supported.",
+            "keywords": [
+                "eloquent",
+                "laravel",
+                "laravel4",
+                "laravel5",
+                "order",
+                "orderable",
+                "ordering",
+                "sort",
+                "sortable",
+                "sorting"
+            ],
+            "support": {
+                "issues": "https://github.com/boxfrommars/rutorika-sortable/issues",
+                "source": "https://github.com/boxfrommars/rutorika-sortable/tree/master"
+            },
+            "time": "2020-03-14T11:22:10+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
