@@ -15,10 +15,10 @@ Route::get('/', 'HomeController@index');
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::resource("goals", "GoalController");
+Route::resource("goals", "GoalController")->middleware('auth');
 
-Route::resource("goals.todos", "TodoController");
+Route::resource("goals.todos", "TodoController")->middleware('auth');
 
-Route::post('/goals/{goal}/todos/{todo}/sort', 'TodoController@sort');
+Route::post('/goals/{goal}/todos/{todo}/sort', 'TodoController@sort')->middleware('auth');
 
 Auth::routes(); //ログイン機能で必要なルーティング

@@ -11,6 +11,9 @@ class HomeController extends Controller
      *
      * @return void
      */
+     
+    //HomeController.phpが呼び出された際にユーザーがログイン済みかどうかをチェックしている。
+    //コントローラーの__constructで設定する場合はすべてのアクションの実行前にログイン状態を確認できる。
     public function __construct()
     {
         $this->middleware('auth');
