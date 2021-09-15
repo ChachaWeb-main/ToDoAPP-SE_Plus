@@ -37,6 +37,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
     
+    //以下、リレーション(関係性)を実装。hasmany → 多対多
     public function goals()
     {
         return $this->hasMany('App\Goal');
@@ -45,5 +46,10 @@ class User extends Authenticatable
     public function todos()
     {
         return $this->hasMany('App\Todo');
+    }
+    
+    public function tags()
+    {
+        return $this->hasMany('App\Tag');
     }
 }
