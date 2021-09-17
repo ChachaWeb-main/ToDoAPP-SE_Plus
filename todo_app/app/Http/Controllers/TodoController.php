@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Todo;
 use App\Goal;
+use App\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,11 +15,9 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-     
-    //ユーザーが作成したすべてのTodoをJSON(JavaScript Object Notation)という形式で送信。
-    public function index()
+    public function index(Request $request, Goal $goal)
     {
-        $todos = $goal->todos()->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
+        $todos = $goal->todos()->with('tags')->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
         return response()->json($todos);
     }
 
@@ -28,9 +27,7 @@ class TodoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-     
-    //送られてきたリクエストの値を使い、新しくGoalを作成。
-    public function store(Request $request) //store = 蓄える
+    public function store(Request $request, Goal $goal)
     {
         $todo = new Todo();
         $todo->content = request('content');
@@ -39,10 +36,10 @@ class TodoController extends Controller
         $todo->position = request('position');
         $todo->done = false;
         $todo->save();
-        $todos = $goal->todos()->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
+        $todos = $goal->todos()->with('tags')->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
         return response()->json($todos);
     }
-
+    
     /**
      * Update the specified resource in storage.
      *
@@ -50,9 +47,7 @@ class TodoController extends Controller
      * @param  \App\Todo  $todo
      * @return \Illuminate\Http\Response
      */
-     
-    //送られてきたリクエストの値を使い、既存のGoalを更新。
-    public function update(Request $request, Todo $todo)
+    public function update(Request $request, Goal $goal, Todo $todo)
     {
         $todo->content = request('content');
         $todo->user_id = Auth::id();
@@ -61,7 +56,7 @@ class TodoController extends Controller
         $todo->done = (bool) request('done');
         $todo->save();
 
-        $todos = $goal->todos()->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
+        $todos = $goal->todos()->with('tags')->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
         return response()->json($todos);
     }
 
@@ -71,17 +66,13 @@ class TodoController extends Controller
      * @param  \App\Todo  $todo
      * @return \Illuminate\Http\Response
      */
-     
-    //送られてきたリクエストの値を使い、既存のGoalを削除。
-    public function destroy(Todo $todo)
+    public function destroy(Request $request, Goal $goal, Todo $todo)
     {
         $todo->delete();
-        $todos = $goal->todos()->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
+        $todos = $goal->todos()->with('tags')->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
         return response()->json($todos);
     }
-    
-    
-    //Todoを並び替える sortアクションの実装。
+
     public function sort(Request $request, Goal $goal, Todo $todo)
     {
         $exchangeTodo = Todo::where('position', request('sortId'))->first();
@@ -95,9 +86,26 @@ class TodoController extends Controller
             $todo->moveAfter($exchangeTodo);
         }
 
-        $todos = $goal->todos()->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
+        $todos = $goal->todos()->with('tags')->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
 
         return response()->json($todos);
     }
-    
+
+    public function addTag(Request $request, Goal $goal, Todo $todo, Tag $tag)
+    {
+        $todo->tags()->attach($tag->id);
+
+        $todos = $goal->todos()->with('tags')->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
+
+        return response()->json($todos);
+    }
+
+    public function removeTag(Request $request, Goal $goal, Todo $todo, Tag $tag)
+    {
+        $todo->tags()->detach($tag->id);
+
+        $todos = $goal->todos()->with('tags')->orderBy('done', 'asc')->orderBy('position', 'asc')->get();
+
+        return response()->json($todos);
+    }
 }

@@ -25,6 +25,9 @@
                 <div class="card" style="width: 18rem;" v-if="todo.done == 0">
                     <div class="card-body">
                         <h5 class="card-title">{{todo.content}}</h5>
+                        <div class="mb-2">
+                            Tag：<span v-for="(key, index) in todo.tags" :key="index"><small class="mr-1">{{todo.tags[index].title}}</small></span>
+                        </div>
                         <h6 class="card-subtitle mb-2 text-muted">{{todo.created_at}}</h6>
                     </div>
                     <div class="btn-group position-absolute dropdown" style="top:10px; right:4px;">
@@ -41,6 +44,9 @@
                 <div class="card" style="width: 18rem;" v-if="todo.done == 1">
                     <div class="card-body">
                         <h5 class="card-title"><s>{{todo.content}}</s></h5>
+                        <div class="mb-2">
+                            Tag：<span v-for="(key, index) in todo.tags" :key="index"><small class="mr-1">{{todo.tags[index].title}}</small></span>
+                        </div>
                         <h6 class="card-subtitle mb-2 text-muted">{{todo.created_at}}</h6>
                     </div>
                     <div class="btn-group position-absolute dropdown" style="top:10px; right:4px;">
@@ -67,6 +73,18 @@
                         </div>
                         <div class="modal-body">
                             <input v-model="content" class="form-control">
+                            <div v-for="(key, index) in tags" :key="index">
+                                <div class="form-check">
+                                    <span v-if="checkTag(todo.tags, tags[index].title)">
+                                        <span >✔</span>
+                                        <button class="btn btn-secondary m-1" v-on:click="removeTodoTag(todo.id, tags[index].id)">{{ tags[index].title }}</button>
+                                    </span>
+                                    <span v-else>
+                                        <span>▢</span>
+                                        <button class="btn btn-secondary m-1" v-on:click="addTodoTag(todo.id, tags[index].id)">{{ tags[index].title }}</button>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal" v-on:click="editTodoContent(todo)">Submit</button>
@@ -111,11 +129,13 @@ export default {
             id: "",
             content: "",
             todos: [],
+            tags: [],
             sort_id: ""
         }
     },
     mounted: function () {
         this.getAllTodos();
+        this.getAllTags();
     },
     methods: {
         getAllTodos: function () {
@@ -127,6 +147,53 @@ export default {
             }, (error) => {
                 console.log(error)
             })
+        },
+        getAllTags: function () {
+            axios.get("/tags").then((response) => {
+                console.log(response)
+                for(let i = 0; i < response.data.length; i++) {
+                    this.tags.push(response.data[i])
+                    console.log(this.tags[i])
+                }
+                console.log(this.tags)
+            }, (error) => {
+                console.log(error)
+            })
+        },
+        checkTag: function (tags, title) {
+            let result = tags.filter(function(item, index) {
+                if (item.title === title)
+                    return true;
+            })
+
+            console.log(result.length);
+            if (result.length > 0) {
+                return result[0].title == title
+            }
+            return false;
+        },
+        addTodoTag: function (todoId, tagId) {
+            axios.defaults.headers['X-CSRF-TOKEN'] = $('meta[name=csrf-token]').attr('content');
+            axios.defaults.headers['content-type'] = 'application/json';
+            axios.post(`/goals/${this.goalId}/todos/${todoId}/tags/${tagId}`).then((response) => {
+                this.todos.length = 0;
+                for (let i = 0; i < response.data.length; i++) {
+                    this.todos.push(response.data[i])
+                }
+            }, (error) => {
+                console.log(error)
+            })
+            this.$forceUpdate();
+        },
+        removeTodoTag: function (todoId, tagId) {
+            axios.defaults.headers['X-CSRF-TOKEN'] = $('meta[name=csrf-token]').attr('content');
+            axios.defaults.headers['content-type'] = 'application/json';
+            axios.post(`/goals/${this.goalId}/todos/${todoId}/tags/${tagId}`, {_method: "delete"}).then((response) => {
+                this.todos = response.data;
+            }, (error) => {
+                console.log(error)
+            })
+            this.$forceUpdate();
         },
         addNewTodo: function () {
             axios.defaults.headers['X-CSRF-TOKEN'] = $('meta[name=csrf-token]').attr('content');

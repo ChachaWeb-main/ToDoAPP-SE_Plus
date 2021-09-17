@@ -25,6 +25,9 @@
                             </div>
                         </div>
 
+@foreach ($errors->all() as $error)
+  <li>{{$error}}</li>
+@endforeach
                         <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
